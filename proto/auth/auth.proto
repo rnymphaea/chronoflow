@@ -8,6 +8,7 @@ service Auth {
   rpc Register (RegisterRequest) returns (RegisterResponse);
   rpc Login (LoginRequest) returns (LoginResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 }
 
@@ -32,8 +33,7 @@ message LoginResponse {
 }
 
 message RefreshTokenRequest {
-  string access_token = 1;
-  string refresh_token = 2;
+  string refresh_token = 1;
 }
 
 message RefreshTokenResponse {
@@ -41,9 +41,17 @@ message RefreshTokenResponse {
   string refresh_token = 2;
 }
 
+message VerifyTokenRequest {
+  string token = 1;
+}
+
+message VerifyTokenResponse {
+  string user_id = 1;
+  bool is_valid = 2;
+}
+
 message LogoutRequest {
-  string access_token = 1;
-  string refresh_token = 2;
+  string refresh_token = 1;
 }
 
 message LogoutResponse {
