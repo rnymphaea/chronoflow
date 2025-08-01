@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/rnymphaea/chronoflow/auth/internal/config"
+)
 
 func main() {
-	fmt.Println("Hello world!")
+	cfg, err := config.LoadServerConfig()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(cfg)
+	}
 }
