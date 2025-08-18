@@ -1,16 +1,9 @@
 package main
 
 import (
-	"fmt"
-
-	"github.com/rnymphaea/chronoflow/auth/internal/config"
+	"github.com/rnymphaea/chronoflow/auth/internal/service"
 )
 
 func main() {
-	cfg, err := config.LoadServerConfig()
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println(cfg)
-	}
+	service.Run()
 }
