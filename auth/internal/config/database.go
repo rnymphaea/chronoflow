@@ -23,6 +23,7 @@ type PostgresConfig struct {
 	PoolHealthCheckPeriod time.Duration `env:"POSTGRES_POOL_HEALTHCHECK_PERIOD" envDefault:"1m"`
 
 	Timeout time.Duration `env:"POSTGRES_TIMEOUT" envDefault:"5s"`
+	Retries int           `env:"POSTGRES_RETRIES" envDeafault:"3"`
 }
 
 func LoadPostgresConfig() (*PostgresConfig, error) {
