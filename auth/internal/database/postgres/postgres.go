@@ -26,6 +26,7 @@ func New(cfg *config.PostgresConfig, log logger.Logger) (*PostgresDB, error) {
 	var p PostgresDB
 	p.log = log
 	p.retryCfg = cfg.RetryCfg
+	p.requestTimeout = cfg.RequestTimeout
 
 	p.log.Debug("creating new postgres pool")
 
