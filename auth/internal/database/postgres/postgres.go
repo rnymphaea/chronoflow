@@ -9,46 +9,77 @@ import (
 
 	"github.com/rnymphaea/chronoflow/auth/internal/config"
 	"github.com/rnymphaea/chronoflow/auth/internal/logger"
+	"github.com/rnymphaea/chronoflow/auth/internal/util"
 )
 
 type PostgresDB struct {
-	db      *pgxpool.Pool
-	log     logger.Logger
-	timeout time.Duration
-	retries int
+	pool           *pgxpool.Pool
+	requestTimeout time.Duration
+	retryCfg       config.RetryConfig
+
+	log logger.Logger
 }
 
 func New(cfg *config.PostgresConfig, log logger.Logger) (*PostgresDB, error) {
-	log.Debug("creating new postgres pool")
+	log = log.Component("postgres")
+
+	var p PostgresDB
+	p.log = log
+	p.retryCfg = cfg.RetryCfg
+
+	p.log.Debug("creating new postgres pool")
+
+	dsn := fmt.Sprintf("postgres://%s:***@%s:%s/%s?sslmode=%s",
+		cfg.User, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
 
 	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName, cfg.SSLMode)
 
-	pool, err := pgxpool.New(context.TODO(), connStr)
+	poolCfg, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create pool: %w", err)
+		return nil, fmt.Errorf("failed to parse config: %w", err)
 	}
 
-	p := &PostgresDB{
-		db:      pool,
-		log:     log.Component("postgres"),
-		timeout: cfg.Timeout,
+	poolCfg.MaxConns = cfg.PoolMaxConns
+	poolCfg.MinConns = cfg.PoolMinConns
+	poolCfg.MaxConnLifetime = cfg.PoolMaxConnLifetime
+	poolCfg.MaxConnIdleTime = cfg.PoolMaxConnIdleTime
+	poolCfg.HealthCheckPeriod = cfg.PoolHealthCheckPeriod
+
+	log.Debugf("trying to create pool", map[string]interface{}{
+		"dsn":          dsn,
+		"retry_config": p.retryCfg,
+	})
+
+	for i := 0; i < p.retryCfg.MaxAttempts; i++ {
+		ctxPing, cancel := context.WithTimeout(context.TODO(), p.requestTimeout)
+		defer cancel()
+
+		pool, err := pgxpool.NewWithConfig(ctxPing, poolCfg)
+		if err == nil {
+			if err = pool.Ping(ctxPing); err == nil {
+				p.pool = pool
+				p.log.Info("successfully connected to postgres")
+				break
+			}
+		}
+
+		delay := util.RetryDelay(p.retryCfg, i)
+
+		p.log.Warnf("connection failed", map[string]interface{}{
+			"attempt": i + 1,
+		})
+
+		time.Sleep(delay)
 	}
 
-	if err := p.Ping(context.TODO()); err != nil {
-		return nil, err
-	}
-
-	p.log.Info("connected to postgres")
-
-	return p, nil
+	return &p, nil
 }
 
 func (p *PostgresDB) Ping(ctx context.Context) error {
-	p.log.Debug("ping postgres")
-	return p.db.Ping(ctx)
+	return p.pool.Ping(ctx)
 }
 
 func (p *PostgresDB) Close() {
-	p.db.Close()
+	p.pool.Close()
 }

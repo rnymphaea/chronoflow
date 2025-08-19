@@ -6,7 +6,9 @@ import (
 	"github.com/rnymphaea/chronoflow/auth/internal/cache"
 	"github.com/rnymphaea/chronoflow/auth/internal/config"
 	"github.com/rnymphaea/chronoflow/auth/internal/database"
+	"github.com/rnymphaea/chronoflow/auth/internal/database/postgres"
 	"github.com/rnymphaea/chronoflow/auth/internal/logger"
+	zerolog "github.com/rnymphaea/chronoflow/auth/internal/logger/zerolog"
 )
 
 func (s *Service) registerLogger(cfg *config.LoggerConfig) error {
@@ -17,7 +19,7 @@ func (s *Service) registerLogger(cfg *config.LoggerConfig) error {
 
 	switch cfg.Type {
 	case "zerolog":
-		l = zerologger.New(cfg)
+		l = zerolog.New(cfg)
 	default:
 		return fmt.Errorf("logger type [%s] is not supported", cfg.Type)
 	}
@@ -60,15 +62,15 @@ func (s *Service) registerCache(cacheType string, log logger.Logger) error {
 
 	switch cacheType {
 	case "redis":
-		cfg, err := config.LoadRedisConfig()
-		if err != nil {
-			return err
-		}
-
-		c, err = redis.New(cfg, log)
-		if err != nil {
-			return err
-		}
+		//		cfg, err := config.LoadRedisConfig()
+		//		if err != nil {
+		//			return err
+		//		}
+		//
+		//		c, err = redis.New(cfg, log)
+		//		if err != nil {
+		//			return err
+		//		}
 
 	default:
 		return fmt.Errorf("cache type [%s] is not supported", cacheType)
