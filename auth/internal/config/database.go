@@ -1,7 +1,6 @@
 package config
 
 import (
-	_ "os"
 	"time"
 
 	"github.com/caarlos0/env/v11"
