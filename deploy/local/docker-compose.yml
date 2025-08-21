@@ -1,0 +1,21 @@
+services:
+  auth:
+    build:
+      context: ../../auth
+      dockerfile: Dockerfile
+    env_file:
+      - ../../auth/.env 
+    secrets:
+      - db_password
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "8081"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+secrets:
+  db_password:
+    file: ./secret/dbpass.txt

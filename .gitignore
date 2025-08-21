@@ -29,3 +29,5 @@ go.work.sum
 .vscode/
 
 gen/
+
+deploy/*/secret

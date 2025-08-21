@@ -58,19 +58,6 @@ func TestRetryDelay_NegativeJitter(t *testing.T) {
 	}
 }
 
-func BenchmarkRetryDelay(b *testing.B) {
-	cfg := config.RetryConfig{
-		InitialTimeout: 50 * time.Millisecond,
-		Multiplier:     1.5,
-		Jitter:         0.3,
-		MaxAttempts:    5,
-	}
-
-	for i := 0; i < b.N; i++ {
-		_ = util.RetryDelay(cfg, i%cfg.MaxAttempts)
-	}
-}
-
 func TestRetryDelay_CoversNegativeDelayBranch(t *testing.T) {
 	cfg := config.RetryConfig{
 		InitialTimeout: 100 * time.Millisecond,
@@ -86,5 +73,18 @@ func TestRetryDelay_CoversNegativeDelayBranch(t *testing.T) {
 		if delay <= 0 {
 			t.Errorf("expected delay > 0, got %v", delay)
 		}
+	}
+}
+
+func BenchmarkRetryDelay(b *testing.B) {
+	cfg := config.RetryConfig{
+		InitialTimeout: 50 * time.Millisecond,
+		Multiplier:     1.5,
+		Jitter:         0.3,
+		MaxAttempts:    5,
+	}
+
+	for i := 0; i < b.N; i++ {
+		_ = util.RetryDelay(cfg, i%cfg.MaxAttempts)
 	}
 }
