@@ -30,4 +30,4 @@ go.work.sum
 
 gen/
 
-deploy/*/secret
+deploy/*/secrets

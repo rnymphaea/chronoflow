@@ -18,4 +18,4 @@ services:
 
 secrets:
   db_password:
-    file: ./secret/dbpass.txt
+    file: ./secrets/dbpass.txt
