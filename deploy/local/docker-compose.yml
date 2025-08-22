@@ -16,6 +16,32 @@ services:
       timeout: 5s
       retries: 5
 
+  auth_postgres:
+    image: postgres:17-alpine
+    container_name: auth-postgres
+    env_file:
+      - ../../auth/.env
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_DB: auth_db
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password 
+    secrets:
+      - db_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
 secrets:
   db_password:
     file: ./secrets/dbpass.txt
+
+volumes:
+  postgres_data:
