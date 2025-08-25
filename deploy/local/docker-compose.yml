@@ -9,6 +9,9 @@ services:
       - db_password
     ports:
       - "8081:8080"
+    depends_on:
+      auth_postgres:
+        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "8081"]
@@ -18,22 +21,21 @@ services:
 
   auth_postgres:
     image: postgres:17-alpine
-    container_name: auth-postgres
     env_file:
-      - ../../auth/.env
+      - .env
     environment:
-      POSTGRES_USER: auth_user
-      POSTGRES_DB: auth_db
-      POSTGRES_PASSWORD_FILE: /run/secrets/db_password 
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
+      POSTGRES_PASSWORD_FILE: ${POSTGRES_PASSWORD_FILE} 
     secrets:
       - db_password
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U auth_user -d auth_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d {POSTGRES_DB_NAME}"]
       interval: 10s
       timeout: 5s
       retries: 5
