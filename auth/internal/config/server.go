@@ -7,7 +7,7 @@ import (
 )
 
 type ServerConfig struct {
-	Address string `env:"ADDRESS" envDefault:":50051"`
+	Address string `env:"ADDRESS" envDefault:":50052"`
 
 	MaxConcurrentStreams uint32 `env:"MAX_CONCURRENT_STREAMS" envDefault:"100"`
 

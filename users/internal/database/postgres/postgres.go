@@ -53,12 +53,14 @@ func New(cfg *config.PostgresConfig, log logger.Logger) (*PostgresDB, error) {
 	})
 
 	for i := 0; i < p.retryCfg.MaxAttempts; i++ {
-		ctxPing, cancel := context.WithTimeout(context.TODO(), p.requestTimeout)
-		defer cancel()
+		ctx, cancel := context.WithTimeout(context.TODO(), p.requestTimeout)
 
-		pool, err := pgxpool.NewWithConfig(ctxPing, poolCfg)
+		pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
+		cancel()
 		if err == nil {
+			ctxPing, cancel := context.WithTimeout(context.TODO(), p.requestTimeout)
 			if err = pool.Ping(ctxPing); err == nil {
+				cancel()
 				p.pool = pool
 				p.log.Info("successfully connected to postgres")
 				break
@@ -69,6 +71,7 @@ func New(cfg *config.PostgresConfig, log logger.Logger) (*PostgresDB, error) {
 
 		p.log.Warnf("connection failed", map[string]interface{}{
 			"attempt": i + 1,
+			"err":     err,
 		})
 
 		time.Sleep(delay)
