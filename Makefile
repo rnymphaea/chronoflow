@@ -1,5 +1,8 @@
 PROTO_DIR := proto
 GEN_DIR := gen/go
+SERVICES := auth
+
+VERSION ?= v1
 
 MODE ?= local
 
@@ -30,8 +33,10 @@ local_stop:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
 generate:
-	@mkdir -p ${GEN_DIR}/auth
-	@protoc -I ${PROTO_DIR}/ ${PROTO_DIR}/auth/auth.proto \
-		--go_out=${GEN_DIR} --go_opt=paths=source_relative \
-		--go-grpc_out=${GEN_DIR} --go-grpc_opt=paths=source_relative
+	@for service in $(SERVICES); do \
+		mkdir -p ${GEN_DIR}/$$service/$(VERSION); \
+		protoc -I ${PROTO_DIR}/ ${PROTO_DIR}/$$service/$(VERSION)/*.proto \
+			--go_out=${GEN_DIR} --go_opt=paths=source_relative \
+			--go-grpc_out=${GEN_DIR} --go-grpc_opt=paths=source_relative; \
+	done
 	@echo "Код успешно сгенерирован в ${GEN_DIR}"
