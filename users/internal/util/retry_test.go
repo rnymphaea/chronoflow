@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/rnymphaea/chronoflow/auth/internal/config"
-	"github.com/rnymphaea/chronoflow/auth/internal/util"
+	"github.com/rnymphaea/chronoflow/users/internal/config"
+	"github.com/rnymphaea/chronoflow/users/internal/util"
 )
 
 func TestRetryDelay(t *testing.T) {

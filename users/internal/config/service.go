@@ -7,7 +7,8 @@ import (
 )
 
 type StorageConfig struct {
-	CacheType string `env:"CACHE_TYPE" envDefault:"memory"`
+	DatabaseType string `env:"DATABASE_TYPE" envDefault:"postgres"`
+	CacheType    string `env:"CACHE_TYPE" envDefault:"memory"`
 }
 
 type LoggerConfig struct {

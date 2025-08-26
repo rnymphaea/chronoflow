@@ -40,3 +40,7 @@ generate:
 			--go-grpc_out=${GEN_DIR} --go-grpc_opt=paths=source_relative; \
 	done
 	@echo "Код успешно сгенерирован в ${GEN_DIR}"
+
+clean:
+	@rm -rf $(GEN_DIR)
+	@echo "Удалено: $(GEN_DIR)"

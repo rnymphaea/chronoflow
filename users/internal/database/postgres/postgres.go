@@ -7,9 +7,9 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/rnymphaea/chronoflow/auth/internal/config"
-	"github.com/rnymphaea/chronoflow/auth/internal/logger"
-	"github.com/rnymphaea/chronoflow/auth/internal/util"
+	"github.com/rnymphaea/chronoflow/users/internal/config"
+	"github.com/rnymphaea/chronoflow/users/internal/logger"
+	"github.com/rnymphaea/chronoflow/users/internal/util"
 )
 
 type PostgresDB struct {

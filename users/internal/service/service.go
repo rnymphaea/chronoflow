@@ -3,14 +3,16 @@ package service
 import (
 	"log"
 
-	"github.com/rnymphaea/chronoflow/auth/internal/cache"
-	"github.com/rnymphaea/chronoflow/auth/internal/config"
-	"github.com/rnymphaea/chronoflow/auth/internal/logger"
+	"github.com/rnymphaea/chronoflow/users/internal/cache"
+	"github.com/rnymphaea/chronoflow/users/internal/config"
+	"github.com/rnymphaea/chronoflow/users/internal/database"
+	"github.com/rnymphaea/chronoflow/users/internal/logger"
 )
 
 type Service struct {
-	Cache  cache.Cache
-	Logger logger.Logger
+	Database database.Database
+	Cache    cache.Cache
+	Logger   logger.Logger
 }
 
 func Run() {
@@ -36,6 +38,11 @@ func Run() {
 
 func (s *Service) registerComponents(loggercfg *config.LoggerConfig, storagecfg *config.StorageConfig) error {
 	err := s.registerLogger(loggercfg)
+	if err != nil {
+		return err
+	}
+
+	err = s.registerDatabase(storagecfg.DatabaseType, s.Logger)
 	if err != nil {
 		return err
 	}

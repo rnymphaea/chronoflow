@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/rnymphaea/chronoflow/auth/internal/config"
+	"github.com/rnymphaea/chronoflow/users/internal/config"
 )
 
 func init() {
