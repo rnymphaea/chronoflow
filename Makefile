@@ -41,6 +41,7 @@ generate:
 	done
 	@echo "Код успешно сгенерирован в ${GEN_DIR}"
 
+.PHONY: clean
 clean:
 	@rm -rf $(GEN_DIR)
 	@echo "Удалено: $(GEN_DIR)"
