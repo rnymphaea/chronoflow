@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o /migrate ./cmd/migrate
 
 RUN addgroup -g 10001 -S appgroup && adduser -u 10001 -S -D -G appgroup appuser
 
-FROM alpine:3.20
+FROM alpine:3.22
 WORKDIR /app
 
 COPY --from=builder /etc/passwd /etc/passwd

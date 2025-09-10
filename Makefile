@@ -11,14 +11,14 @@ LOCAL_DEPLOY_DIR := deploy/local
 ifeq ($(MODE), local)
 	BUILD = local_build 
 	RUN = local_up
-	STOP = local_stop
+	DOWN = local_down
 endif
 
 .PHONY: all
 all: $(BUILD) $(RUN)
 
 .PHONY:
-stop: $(STOP)
+down: $(DOWN)
 
 .PHONY: local_build
 local_build:
@@ -28,8 +28,8 @@ local_build:
 local_up:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml up -d
 
-.PHONY: local_stop
-local_stop:
+.PHONY: local_down
+local_down:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
 generate:

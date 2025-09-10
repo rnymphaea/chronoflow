@@ -13,7 +13,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o chronoflow-users ./cmd
 
 RUN addgroup -g 10001 -S appgroup && adduser -u 10001 -S -D -G appgroup appuser
 
-FROM alpine:3.19
+FROM alpine:3.22
 
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
