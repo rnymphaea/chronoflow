@@ -32,6 +32,7 @@ local_up:
 local_down:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
+.PHONY: lint
 lint:
 	@for service in $(SERVICES); do \
 		echo "Running linters for $$service..."; \
