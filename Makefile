@@ -32,6 +32,12 @@ local_up:
 local_down:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
+lint:
+	@echo "Running linters for auth..."
+	@cd auth && golangci-lint run ./...
+	@echo "Running linters for users..."
+	@cd users && golangci-lint run ./...
+
 generate:
 	@for service in $(SERVICES); do \
 		mkdir -p ${GEN_DIR}/$$service/$(VERSION); \

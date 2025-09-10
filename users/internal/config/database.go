@@ -9,7 +9,7 @@ import (
 
 type PostgresConfig struct {
 	User     string `env:"POSTGRES_USER,required"`
-	Password string `env:"POSTGRES_PASSWORD_FILE,file",required`
+	Password string `env:"POSTGRES_PASSWORD_FILE,file,required"`
 	Host     string `env:"POSTGRES_HOST,required"`
 	Port     string `env:"POSTGRES_PORT,required"`
 	DBName   string `env:"POSTGRES_DB_NAME,required"`

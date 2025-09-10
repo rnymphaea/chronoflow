@@ -8,10 +8,6 @@ import (
 	"github.com/rnymphaea/chronoflow/users/internal/config"
 )
 
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
-
 func RetryDelay(cfg config.RetryConfig, attempt int) time.Duration {
 	backoff := float64(cfg.InitialTimeout) * math.Pow(cfg.Multiplier, float64(attempt))
 	jitter := backoff * cfg.Jitter * (rand.Float64()*2 - 1)

@@ -59,8 +59,8 @@ func New(cfg *config.PostgresConfig, log logger.Logger) (*PostgresDB, error) {
 		cancel()
 		if err == nil {
 			ctxPing, cancel := context.WithTimeout(context.TODO(), p.requestTimeout)
+			defer cancel()
 			if err = pool.Ping(ctxPing); err == nil {
-				cancel()
 				p.pool = pool
 				p.log.Info("successfully connected to postgres")
 				break
