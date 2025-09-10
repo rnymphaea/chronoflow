@@ -1,6 +1,6 @@
 PROTO_DIR := proto
 GEN_DIR := gen/go
-SERVICES := auth
+SERVICES := auth users
 
 VERSION ?= v1
 
@@ -33,10 +33,11 @@ local_down:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
 lint:
-	@echo "Running linters for auth..."
-	@cd auth && golangci-lint run ./...
-	@echo "Running linters for users..."
-	@cd users && golangci-lint run ./...
+	@for service in $(SERVICES); do \
+		echo "Running linters for $$service..."; \
+		cd $$service && golangci-lint run ./...; \
+		cd ..; \
+	done
 
 generate:
 	@for service in $(SERVICES); do \
