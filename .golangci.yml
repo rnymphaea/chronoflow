@@ -1,33 +1,37 @@
 version: "2"
+
 linters:
-  default: none
+  disable-all: true
   enable:
-    - goheader
+    - govet
+    - staticcheck
+    - errcheck
     - ineffassign
+    - unused
     - misspell
     - nakedret
-    - staticcheck
-    - unused
-    - govet
-    - errcheck
-  exclusions:
-    generated: lax
-    presets:
-      - comments
-      - common-false-positives
-      - legacy
-      - std-error-handling
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
-formatters:
+    - goheader
+    - bodyclose
+    - contextcheck
+    - durationcheck
+    - gocritic
+    - prealloc
+    - sqlclosecheck
+    - unconvert
+    - unparam
+    - predeclared
+    - gosec
+
+formatters: 
   enable:
     - gofmt
     - goimports
-  exclusions:
-    generated: lax
-    paths:
-      - third_party$
-      - builtin$
-      - examples$
+
+run:
+  timeout: 5m
+  tests: true
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0
