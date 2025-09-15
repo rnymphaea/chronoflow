@@ -32,6 +32,14 @@ local_up:
 local_down:
 	docker compose -f $(LOCAL_DEPLOY_DIR)/docker-compose.yml down
 
+.PHONY: test 
+test:
+	@for service in $(SERVICES); do \
+		echo "Running tests for $$service..."; \
+		cd $$service && go test ./... -v; \
+		cd ..; \
+	done
+
 .PHONY: lint
 lint:
 	@for service in $(SERVICES); do \

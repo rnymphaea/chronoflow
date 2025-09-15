@@ -5,8 +5,8 @@ package chronoflow.auth.v1;
 option go_package = "github.com/rnymphaea/chronoflow/gen/go/auth/v1;authv1";
 
 service Auth {
-  rpc Register (RegisterRequest) returns (RegisterResponse);
-  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
   rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
   rpc VerifyToken(VerifyTokenRequest) returns (VerifyTokenResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);

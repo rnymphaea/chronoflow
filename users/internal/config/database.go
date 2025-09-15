@@ -16,7 +16,7 @@ type PostgresConfig struct {
 	SSLMode  string `env:"POSTGRES_SSL_MODE" envDefault:"disable"`
 
 	PoolMaxConns          int32         `env:"POSTGRES_POOL_MAX_CONNS" envDefault:"4"`
-	PoolMinConns          int32         `env:"POSTGRES_POOL_MAX_CONNS" envDefault:"0"`
+	PoolMinConns          int32         `env:"POSTGRES_POOL_MIN_CONNS" envDefault:"0"`
 	PoolMaxConnLifetime   time.Duration `env:"POSTGRES_POOL_MAX_CONN_LIFETIME" envDefault:"1h"`
 	PoolMaxConnIdleTime   time.Duration `env:"POSTGRES_POOL_MAX_CONN_IDLE_TIME" envDefault:"30m"`
 	PoolHealthCheckPeriod time.Duration `env:"POSTGRES_POOL_HEALTHCHECK_PERIOD" envDefault:"1m"`
