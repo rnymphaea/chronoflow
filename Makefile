@@ -1,6 +1,10 @@
+OWNER := rnymphaea
+PROJECT := chronoflow
+
 PROTO_DIR := proto
 GEN_DIR := gen/go
-SERVICES := auth users
+SERVICES := users
+LINTER := ~/go/bin/golangci-lint
 
 VERSION ?= v1
 
@@ -44,7 +48,7 @@ test:
 lint:
 	@for service in $(SERVICES); do \
 		echo "Running linters for $$service..."; \
-		cd $$service && golangci-lint run ./...; \
+		cd $$service && $(LINTER) run ./...; \
 		cd ..; \
 	done
 
@@ -55,6 +59,8 @@ generate:
 			--go_out=${GEN_DIR} --go_opt=paths=source_relative \
 			--go-grpc_out=${GEN_DIR} --go-grpc_opt=paths=source_relative; \
 	done
+	@cd $(GEN_DIR) && go mod init github.com/$(OWNER)/$(PROJECT)/$(GEN_DIR)
+	@cd $(GEN_DIR) && go mod tidy
 	@echo "Код успешно сгенерирован в ${GEN_DIR}"
 
 .PHONY: clean

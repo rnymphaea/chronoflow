@@ -16,6 +16,11 @@ type Service struct {
 func Run() {
 	var s Service
 
+	servercfg, err := config.LoadServerConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	loggercfg, err := config.LoadLoggerConfig()
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +39,16 @@ func Run() {
 	s.Logger.Info("config loaded successfully")
 }
 
-func (s *Service) registerComponents(loggercfg *config.LoggerConfig, storagecfg *config.StorageConfig) error {
+func (s *Service) registerComponents(
+	servercfg *config.ServerConfig,
+	loggercfg *config.LoggerConfig,
+	storagecfg *config.StorageConfig,
+) error {
+	err := s.registerServer(servercfg)
+	if err != nil {
+		return err
+	}
+
 	err := s.registerLogger(loggercfg)
 	if err != nil {
 		return err
