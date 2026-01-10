@@ -16,45 +16,29 @@ type Service struct {
 func Run() {
 	var s Service
 
-	servercfg, err := config.LoadServerConfig()
+	cfg, err := config.LoadServiceConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	loggercfg, err := config.LoadLoggerConfig()
+	err = s.setupComponents(cfg.Logger, cfg.Cache)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	storagecfg, err := config.LoadStorageConfig()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = s.registerComponents(loggercfg, storagecfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	s.Logger.Info("config loaded successfully")
+	s.Logger.Info("config loaded successfully", "cache", cfg.Cache.Type, "logger", cfg.Logger.Type)
 }
 
-func (s *Service) registerComponents(
-	servercfg *config.ServerConfig,
-	loggercfg *config.LoggerConfig,
-	storagecfg *config.StorageConfig,
+func (s *Service) setupComponents(
+	loggercfg config.LoggerConfig,
+	cachecfg config.CacheConfig,
 ) error {
-	err := s.registerServer(servercfg)
+	err := s.setupLogger(loggercfg)
 	if err != nil {
 		return err
 	}
 
-	err := s.registerLogger(loggercfg)
-	if err != nil {
-		return err
-	}
-
-	err = s.registerCache(storagecfg.CacheType, s.Logger)
+	err = s.setupCache(cachecfg.Type, s.Logger)
 	if err != nil {
 		return err
 	}

@@ -11,10 +11,10 @@ import (
 )
 
 type Logger struct {
-	zerolog.Logger
+	zl zerolog.Logger
 }
 
-func New(cfg *config.LoggerConfig) *Logger {
+func New(cfg config.LoggerConfig) *Logger {
 	logLevel, err := zerolog.ParseLevel(cfg.Level)
 	if err != nil {
 		logLevel = zerolog.DebugLevel
@@ -37,50 +37,47 @@ func New(cfg *config.LoggerConfig) *Logger {
 	return &Logger{base}
 }
 
-func (l *Logger) Debug(msg string) {
-	l.Logger.Debug().Msg(msg)
+func (l *Logger) Debug(msg string, args ...any) {
+	l.zl.Debug().Fields(parseArgs(args...)).Msg(msg)
 }
 
-func (l *Logger) Debugf(msg string, fields map[string]interface{}) {
-	l.Logger.Debug().Fields(fields).Msg(msg)
+func (l *Logger) Info(msg string, args ...any) {
+	l.zl.Info().Fields(parseArgs(args...)).Msg(msg)
 }
 
-func (l *Logger) Info(msg string) {
-	l.Logger.Info().Msg(msg)
+func (l *Logger) Warn(msg string, args ...any) {
+	l.zl.Warn().Fields(parseArgs(args...)).Msg(msg)
 }
 
-func (l *Logger) Infof(msg string, fields map[string]interface{}) {
-	l.Logger.Info().Fields(fields).Msg(msg)
+func (l *Logger) Error(msg string, args ...any) {
+	l.zl.Error().Fields(parseArgs(args...)).Msg(msg)
 }
 
-func (l *Logger) Warn(msg string) {
-	l.Logger.Warn().Msg(msg)
+func (l *Logger) With(args ...any) logger.Logger {
+	return &Logger{
+		zl: l.zl.With().Fields(parseArgs(args...)).Logger(),
+	}
 }
 
-func (l *Logger) Warnf(msg string, fields map[string]interface{}) {
-	l.Logger.Warn().Fields(fields).Msg(msg)
-}
+func parseArgs(args ...any) map[string]any {
+	if len(args) == 0 {
+		return nil
+	}
 
-func (l *Logger) Error(err error, msg string) {
-	l.Logger.Error().Err(err).Msg(msg)
-}
+	fields := make(map[string]any)
+	for i := 0; i < len(args); i++ {
+		key, ok := args[i].(string)
+		if !ok {
+			continue
+		}
 
-func (l *Logger) Errorf(err error, msg string, fields map[string]interface{}) {
-	l.Logger.Error().Err(err).Fields(fields).Msg(msg)
-}
+		if i+1 < len(args) {
+			fields[key] = args[i+1]
+			i++
+		} else {
+			fields[key] = nil
+		}
+	}
 
-func (l *Logger) Fatal(err error, msg string) {
-	l.Logger.Fatal().Err(err).Msg(msg)
-}
-
-func (l *Logger) Fatalf(err error, msg string, fields map[string]interface{}) {
-	l.Logger.Fatal().Err(err).Fields(fields).Msg(msg)
-}
-
-func (l *Logger) With(fields map[string]interface{}) logger.Logger {
-	return &Logger{l.Logger.With().Fields(fields).Logger()}
-}
-
-func (l *Logger) Component(name string) logger.Logger {
-	return &Logger{l.Logger.With().Str("component", name).Logger()}
+	return fields
 }

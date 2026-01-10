@@ -3,7 +3,7 @@ PROJECT := chronoflow
 
 PROTO_DIR := proto
 GEN_DIR := gen/go
-SERVICES := users
+SERVICES := auth
 LINTER := ~/go/bin/golangci-lint
 
 VERSION ?= v1

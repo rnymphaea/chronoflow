@@ -3,13 +3,14 @@ services:
     build:
       context: ../../auth
       dockerfile: Dockerfile
+    container_name: chronoflow-auth
     env_file:
-      - ../../auth/.env 
+      - ../../auth/.env
+    secrets:
+      - jwt_access_secret
+      - jwt_refresh_secret
     ports:
       - "8081:8081"
-    depends_on:
-      users:
-        condition: service_healthy
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "8081"]
@@ -30,6 +31,8 @@ services:
     depends_on:
       migrate_users:
         condition: service_completed_successfully
+      auth:
+        condition: service_healthy
     restart: unless-stopped
 
   postgres:
@@ -69,6 +72,11 @@ services:
 secrets:
   db_password:
     file: ./secrets/dbpass.txt
+  jwt_access_secret:
+    file: ./secrets/jwt_access_secret.txt
+  jwt_refresh_secret:
+    file: ./secrets/jwt_refresh_secret.txt
+  
 
 volumes:
   postgres_data:
