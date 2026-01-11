@@ -4,7 +4,7 @@ PROJECT := chronoflow
 PROTO_DIR := proto
 GEN_DIR := gen/go
 SERVICES := auth
-LINTER := ~/go/bin/golangci-lint
+LINTER := golangci-lint
 
 VERSION ?= v1
 
@@ -44,15 +44,21 @@ test:
 		cd ..; \
 	done
 
+.PHONY: prepare 
+prepare:
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+	@export PATH="$PATH:$(go env GOPATH)/bin"
+
 .PHONY: lint
-lint:
+lint: prepare
 	@for service in $(SERVICES); do \
 		echo "Running linters for $$service..."; \
 		cd $$service && $(LINTER) run ./...; \
 		cd ..; \
 	done
 
-generate:
+generate: prepare
 	@for service in $(SERVICES); do \
 		mkdir -p ${GEN_DIR}/$$service/$(VERSION); \
 		protoc -I ${PROTO_DIR}/ ${PROTO_DIR}/$$service/$(VERSION)/*.proto \

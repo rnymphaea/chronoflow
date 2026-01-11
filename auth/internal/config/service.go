@@ -11,7 +11,7 @@ type ServiceConfig struct {
 	Cache  CacheConfig
 	Logger LoggerConfig
 	Retry  RetryConfig
-	JWT    JWTConfig
+	Tokens TokensConfig
 }
 
 type CacheConfig struct {
@@ -31,14 +31,20 @@ type RetryConfig struct {
 	MaxAttempts    int           `env:"RETRY_MAX_ATTEMPTS"    envDefault:"5"`
 }
 
+type TokensConfig struct {
+	JWT     JWTConfig
+	Refresh RefreshConfig
+}
+
 type JWTConfig struct {
-	AccessSecret  string `env:"JWT_ACCESS_SECRET,file,required"`
-	RefreshSecret string `env:"JWT_REFRESH_SECRET,file,required"`
+	Secret string `env:"JWT_ACCESS_SECRET,file,required"`
 
-	Issuer string `env:"JWT_ISSUER" envDefault:"auth"`
+	TTL    time.Duration `env:"JWT_ACCESS_TTL" envDefault:"15m"`
+	Issuer string        `env:"JWT_ISSUER"     envDefault:"auth"`
+}
 
-	AccessTTL  time.Duration `env:"JWT_ACCESS_TTL"  envDefault:"15m"`
-	RefreshTTL time.Duration `env:"JWT_REFRESH_TTL" envDefault:"720h"`
+type RefreshConfig struct {
+	TTL time.Duration `env:"REFRESH_TTL" envDefault:"720h"`
 }
 
 func LoadServiceConfig() (*ServiceConfig, error) {
